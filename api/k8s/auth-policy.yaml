@@ -1,0 +1,30 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: jwt-auth
+  namespace: titanic-challenge
+spec:
+  selector:
+    matchLabels:
+      app: titanic-api
+  jwtRules:
+    - issuer: "titanic-api"
+      jwksUri: "http://titanic-api/auth/.well-known/jwks.json"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: api-auth
+  namespace: titanic-challenge
+spec:
+  selector:
+    matchLabels:
+      app: titanic-api
+  rules:
+    - from:
+      - source:
+          requestPrincipals: ["*"]
+      to:
+      - operation:
+          methods: ["GET"]
+          paths: ["/schema", "/statistics/*", "/passengers/*", "/analysis/*"]

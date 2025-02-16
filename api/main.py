@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 import sqlite3
+from auth import router as auth_router
 
 app = FastAPI()
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 DATABASE = "./titanic.db"
 
@@ -9,6 +11,15 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+# Add middleware to log request ID from Istio
+@app.middleware("http")
+async def add_request_id_header(request: Request, call_next):
+    response = await call_next(request)
+    request_id = request.headers.get("x-request-id")
+    if request_id:
+        response.headers["x-request-id"] = request_id
+    return response
 
 @app.get("/schema")
 def get_schema():
