@@ -1,3 +1,4 @@
 # filepath: requirements.txt
 fastapi
 uvicorn[standard]
+sqlite
