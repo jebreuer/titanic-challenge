@@ -8,8 +8,24 @@ spec:
     matchLabels:
       app: titanic-api
   jwtRules:
-    - issuer: "titanic-api"
-      jwksUri: "http://titanic-api/auth/.well-known/jwks.json"
+    - issuer: "http://titanic-api.titanic-challenge.svc.cluster.local:8000"
+      jwksUri: "http://titanic-api.titanic-challenge.svc.cluster.local:8000/auth/.well-known/jwks.json"
+      forwardOriginalToken: true
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: docs-public-access
+  namespace: titanic-challenge
+spec:
+  selector:
+    matchLabels:
+      app: titanic-api
+  action: ALLOW
+  rules:
+    - to:
+      - operation:
+          paths: ["/docs", "/docs/*", "/openapi.json", "/auth/*"]
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -20,6 +36,7 @@ spec:
   selector:
     matchLabels:
       app: titanic-api
+  action: ALLOW
   rules:
     - from:
       - source:

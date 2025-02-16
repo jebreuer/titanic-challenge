@@ -19,8 +19,13 @@ helm_resource(
 helm_resource(
     'istiod',
     chart='istio/istiod',
-    namespace='istio-system',
-    flags=['--wait']
+    namespace='istio-system'
+)
+
+helm_resource(
+    'istio-ingressgateway',
+    chart='istio/gateway',
+    namespace='istio-system'
 )
 
 # Create namespace for the application
@@ -41,14 +46,19 @@ docker_build(
 )
 
 # Kubernetes deployment
-k8s_yaml('k8s/deployment.yaml')
-k8s_yaml('k8s/service.yaml')
+k8s_yaml(['k8s/deployment.yaml', 'k8s/service.yaml', 'k8s/gateway.yaml'])
 
 # Resource configuration
 k8s_resource(
     'titanic-api',
-    port_forwards='8000:8000',
+    port_forwards=['8000:8000'],
     labels=['api']
+)
+
+k8s_resource(
+    'istio-ingressgateway',
+    port_forwards=['8080:80'],
+    labels=['gateway']
 )
 
 # Add auth policy
