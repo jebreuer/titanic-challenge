@@ -1,15 +1,33 @@
+update_settings(k8s_upsert_timeout_secs = 120)
+
 # Set allowed k8s context
 allow_k8s_contexts('docker-desktop')
 
-# Install Istio
+# Create namespaces first
+k8s_yaml('k8s/namespaces.yaml')
+
+# Load Helm extensions
 load('ext://helm_resource', 'helm_resource', 'helm_repo')
 load('ext://namespace', 'namespace_create')
 
-# Add Istio helm repository
+# Add Helm repositories
 helm_repo('istio', 'https://istio-release.storage.googleapis.com/charts')
+helm_repo('jetstack', 'https://charts.jetstack.io')
+helm_repo('jaegertracing', 'https://jaegertracing.github.io/helm-charts')
 
+# Create required namespaces
 namespace_create('istio-system')
+namespace_create('cert-manager')
 
+# Install cert-manager
+helm_resource(
+    'cert-manager',
+    'jetstack/cert-manager',
+    namespace='cert-manager',
+    flags=['--set', 'installCRDs=true'],
+)
+
+# Install Istio
 helm_resource(
     'istio-base',
     chart='istio/base',
@@ -27,9 +45,6 @@ helm_resource(
     chart='istio/gateway',
     namespace='istio-system'
 )
-
-# Create namespace for the application
-k8s_yaml('k8s/namespace.yaml')
 
 # Enable experimental features
 load('ext://uibutton', 'cmd_button')
@@ -89,3 +104,26 @@ k8s_yaml(secret_yaml_tls(
     key_path,
     'istio-system'
 ))
+
+# Install Jaeger (both operator and instance)
+helm_resource(
+    'jaeger',
+    'jaegertracing/jaeger',
+    namespace='istio-system',
+    resource_deps=['cert-manager'],
+    flags=[
+        '--set', 'provisionDataStore.cassandra=false',
+        '--set', 'storage.type=memory',
+        '--set', 'allInOne.enabled=true',
+        '--set', 'collector.enabled=false',
+        '--set', 'query.enabled=false',
+        '--set', 'agent.enabled=false',
+    ]
+)
+
+# Resource configuration
+k8s_resource(
+    'jaeger',
+    port_forwards=['16686:16686'],
+    labels=['observability']
+)

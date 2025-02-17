@@ -1,9 +1,21 @@
 from fastapi import FastAPI, HTTPException, Request
 import sqlite3
 from auth import router as auth_router
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+# Initialize tracing
+trace.set_tracer_provider(TracerProvider())
+otlp_exporter = OTLPSpanExporter(endpoint="http://jaeger-collector.istio-system:4317")
+trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(otlp_exporter))
 
 app = FastAPI()
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+FastAPIInstrumentor.instrument_app(app)
 
 DATABASE = "./titanic.db"
 
