@@ -27,6 +27,9 @@ helm_resource(
     flags=['--set', 'installCRDs=true'],
 )
 
+# Certificate management
+k8s_yaml('k8s/certificates.yaml')
+
 # Install Istio
 helm_resource(
     'istio-base',
@@ -87,23 +90,6 @@ cmd_button(
     icon_name='bug_report',
     argv=['pytest']
 )
-
-# Certificate management
-load('ext://secret', 'secret_yaml_tls')
-
-def generate_certs():
-    local('mkdir -p k8s/certs')
-    local('./k8s/scripts/generate-cert.sh k8s/certs')
-    return 'k8s/certs/tls.crt', 'k8s/certs/tls.key'
-
-# Create TLS secret using secret_yaml_tls
-cert_path, key_path = generate_certs()
-k8s_yaml(secret_yaml_tls(
-    'titanic-credential',
-    cert_path,
-    key_path,
-    'istio-system'
-))
 
 # Install Jaeger (both operator and instance)
 helm_resource(
