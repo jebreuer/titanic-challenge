@@ -1,6 +1,3 @@
-# Project specific
-k8s/certs/
-
 # Python
 __pycache__/
 *.py[cod]
