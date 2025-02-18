@@ -27,9 +27,6 @@ helm_resource(
     flags=['--set', 'installCRDs=true'],
 )
 
-# Certificate management
-k8s_yaml('k8s/certificates.yaml')
-
 # Install Istio
 helm_resource(
     'istio-base',
@@ -63,19 +60,12 @@ docker_build(
     ]
 )
 
-# Kubernetes deployment
-k8s_yaml([
-    'k8s/deployment.yaml',
-    'k8s/service.yaml',
-    'k8s/gateway.yaml',
-    'k8s/auth-secret.yaml'
-])
-
-# Resource configuration
-k8s_resource(
-    'titanic-api',
-    port_forwards=['8000:8000'],
-    labels=['api']
+k8s_yaml(
+    helm(
+        'charts/titanic',
+        name='titanic',
+        namespace='titanic-challenge'
+    )
 )
 
 k8s_resource(
@@ -83,9 +73,6 @@ k8s_resource(
     port_forwards=['8443:443'],
     labels=['gateway']
 )
-
-# Add auth policy
-k8s_yaml('k8s/auth-policy.yaml')
 
 # Add convenient UI buttons
 cmd_button(

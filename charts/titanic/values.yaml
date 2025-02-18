@@ -1,0 +1,25 @@
+api:
+  image: titanic-api
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+service:
+  type: ClusterIP
+  port: 8000
+  targetPort: 8000
+
+namespace: titanic-challenge
+
+users:
+  analyst:
+    password: "demo123"
+    role: "data-analyst"
+  viewer:
+    password: "demo123"
+    role: "viewer"

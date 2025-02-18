@@ -6,7 +6,7 @@ metadata:
   labels:
     app: titanic-api
 spec:
-  replicas: 1
+  replicas: {{ .Values.api.replicaCount }}
   selector:
     matchLabels:
       app: titanic-api
@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
       - name: titanic-api
-        image: titanic-api
-        imagePullPolicy: Never
+        image: {{ .Values.api.image }}
+        imagePullPolicy: IfNotPresent
         env:
         - name: JWT_PRIVATE_KEY
           valueFrom:
@@ -37,10 +37,4 @@ spec:
               key: users.json
         ports:
         - containerPort: 8000
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "100m"
-          limits:
-            memory: "128Mi"
-            cpu: "200m"
+        resources: {{ toYaml .Values.api.resources | nindent 10 }}
