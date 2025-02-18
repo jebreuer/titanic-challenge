@@ -16,6 +16,13 @@ The solution consists of:
 - dev/prod parity ensured via Tilt
 - deployment via Helm to the k8s flavor of your choice
 
+What hasn't made it into the solution but has been considered:
+
+- tests for the api that we can run before actually building the image
+  - what do you guys use for testing Python REST APIs?
+- a build pipeline to automate the build/push process of the api docker image
+  - I'd like to try [dagger](https://dagger.io/) for that
+
 ## Known issues
 
 - after fresh setup the api needs a restart before properly connecting to jaeger (this might be a timing issue)
