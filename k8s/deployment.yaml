@@ -19,6 +19,17 @@ spec:
       - name: titanic-api
         image: titanic-api
         imagePullPolicy: Never
+        env:
+        - name: JWT_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-signing-key
+              key: tls.key
+        - name: JWT_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-signing-key
+              key: tls.crt
         ports:
         - containerPort: 8000
         resources:

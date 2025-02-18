@@ -21,3 +21,31 @@ spec:
   issuerRef:
     name: selfsigned-issuer
     kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: titanic-challenge
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jwt-signing-key
+  namespace: titanic-challenge
+spec:
+  secretName: jwt-signing-key
+  duration: 8760h # 1 year
+  renewBefore: 720h # 30 days
+  commonName: titanic-api.titanic-challenge.svc.cluster.local
+  dnsNames:
+    - titanic-api.titanic-challenge.svc.cluster.local
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io

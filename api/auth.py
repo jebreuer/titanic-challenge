@@ -1,37 +1,25 @@
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from jose import JWTError, jwt
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
+import os
 import base64
+from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 router = APIRouter()
 
-# Generate key pair (in production, load from secure storage)
-private_key = rsa.generate_private_key(
-    public_exponent=65537,
-    key_size=2048,
-    backend=default_backend()
-)
-public_key = private_key.public_key()
+# Load keys from environment variables
+PRIVATE_KEY_PEM = os.environ['JWT_PRIVATE_KEY'].encode('utf-8')
+PUBLIC_KEY_PEM = os.environ['JWT_PUBLIC_KEY'].encode('utf-8')
 
-# Convert to PEM format
-PRIVATE_KEY_PEM = private_key.private_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PrivateFormat.PKCS8,
-    encryption_algorithm=serialization.NoEncryption()
-)
+# Load the private key
+private_key = load_pem_private_key(PRIVATE_KEY_PEM, password=None)
 
-PUBLIC_KEY_PEM = public_key.public_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PublicFormat.SubjectPublicKeyInfo
-)
+# Load the public key from the certificate
+cert = load_pem_x509_certificate(PUBLIC_KEY_PEM)
+public_key = cert.public_key()
 
-# Algorithm changed to RS256
 ALGORITHM = "RS256"
-
-# Update issuer to match the RequestAuthentication policy
 ISSUER = "http://titanic-api.titanic-challenge.svc.cluster.local:8000"
 
 DEMO_USERS = {
