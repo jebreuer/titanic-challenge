@@ -9,7 +9,10 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 # Initialize tracing
 trace.set_tracer_provider(TracerProvider())
-otlp_exporter = OTLPSpanExporter(endpoint="http://jaeger-collector.istio-system:4317")
+otlp_exporter = OTLPSpanExporter(
+    endpoint="jaeger-collector.istio-system.svc.cluster.local:4317",
+    insecure=True
+)
 trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(otlp_exporter))
 
 app = FastAPI()
