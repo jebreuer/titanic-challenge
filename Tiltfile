@@ -80,7 +80,7 @@ k8s_resource(
 )
 
 # Add auth policy
-k8s_yaml('api/k8s/auth-policy.yaml')
+k8s_yaml('k8s/auth-policy.yaml')
 
 # Add convenient UI buttons
 cmd_button(
