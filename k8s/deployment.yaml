@@ -30,6 +30,11 @@ spec:
             secretKeyRef:
               name: jwt-signing-key
               key: tls.crt
+        - name: DEMO_USERS_JSON
+          valueFrom:
+            secretKeyRef:
+              name: auth-users
+              key: users.json
         ports:
         - containerPort: 8000
         resources:

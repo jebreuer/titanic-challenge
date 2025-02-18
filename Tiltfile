@@ -64,7 +64,12 @@ docker_build(
 )
 
 # Kubernetes deployment
-k8s_yaml(['k8s/deployment.yaml', 'k8s/service.yaml', 'k8s/gateway.yaml'])
+k8s_yaml([
+    'k8s/deployment.yaml',
+    'k8s/service.yaml',
+    'k8s/gateway.yaml',
+    'k8s/auth-secret.yaml'
+])
 
 # Resource configuration
 k8s_resource(

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from jose import JWTError, jwt
 import os
+import json
 import base64
 from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
@@ -12,6 +13,9 @@ router = APIRouter()
 PRIVATE_KEY_PEM = os.environ['JWT_PRIVATE_KEY'].encode('utf-8')
 PUBLIC_KEY_PEM = os.environ['JWT_PUBLIC_KEY'].encode('utf-8')
 
+# Load users from environment
+DEMO_USERS = json.loads(os.environ['DEMO_USERS_JSON'])
+
 # Load the private key
 private_key = load_pem_private_key(PRIVATE_KEY_PEM, password=None)
 
@@ -21,17 +25,6 @@ public_key = cert.public_key()
 
 ALGORITHM = "RS256"
 ISSUER = "http://titanic-api.titanic-challenge.svc.cluster.local:8000"
-
-DEMO_USERS = {
-    "analyst": {
-        "password": "demo123",
-        "role": "data-analyst"
-    },
-    "viewer": {
-        "password": "demo123",
-        "role": "viewer"
-    }
-}
 
 @router.post("/token")
 async def login(username: str, password: str):
