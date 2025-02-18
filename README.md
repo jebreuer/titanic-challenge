@@ -2,10 +2,21 @@
 
 Small coding challenge:
 
-1. create an API which allows interaction with [titanic.db](https://github.com/davidjamesknight/SQLite_databases_for_learning_data_science/blob/main/titanic.db) 
+1. create an API which allows interaction with [titanic.db](https://github.com/davidjamesknight/SQLite_databases_for_learning_data_science/blob/main/titanic.db)
 1. make it prod ready
 
-# Known issues
+The solution consists of:
+
+- a small containerized api written in Python
+  - featuring FastAPI
+- auth via Istio
+- https via Istio
+- certificate handling via cert-manager
+- tracing via OTEL and Jaeger
+- dev/prod parity ensured via Tilt
+- deployment via Helm to the k8s flavor of your choice
+
+## Known issues
 
 - after fresh setup the api needs a restart before properly connecting to jaeger (this might be a timing issue)
 
@@ -29,7 +40,7 @@ Tilt automates all the steps needed to build and deploy the application in devel
 
 2. View the Tilt UI:
 
-Open your web browser and go to http://localhost:10350/
+Open your web browser and go to [localhost:10350](http://localhost:10350/)
 
 The Tilt UI will show you:
 
@@ -63,7 +74,6 @@ There's a script called `api_call.sh` that you can use to test a successful setu
 ## Installation
 
 ### TODO before Prod
-
 
 - code review; a second set of eyes is required
 - if you must use the code as is, at least **update the user login data in `charts/titanic/values.yaml` and use proper usernames with strong passwords**
