@@ -18,6 +18,9 @@ spec:
       containers:
       - name: titanic-api
         image: {{ .Values.api.image }}
+        {{- if .Values.api.development.enabled }}
+        command: {{ .Values.api.development.command | toJson }}
+        {{- end }}
         imagePullPolicy: IfNotPresent
         env:
         - name: JWT_PRIVATE_KEY

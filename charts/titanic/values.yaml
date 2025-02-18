@@ -8,6 +8,9 @@ api:
     limits:
       memory: "256Mi"
       cpu: "200m"
+  development:
+    enabled: false
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 service:
   type: ClusterIP

@@ -64,7 +64,8 @@ k8s_yaml(
     helm(
         'charts/titanic',
         name='titanic',
-        namespace='titanic-challenge'
+        namespace='titanic-challenge',
+        set=['api.development.enabled=true']
     )
 )
 
