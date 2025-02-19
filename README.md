@@ -14,6 +14,8 @@ The solution consists of:
 - certificate handling via cert-manager
 - tracing via OTEL and Jaeger
 - dev/prod parity ensured via Tilt
+  - make sure to check out hot reload of the api in dev mode
+  - just change the code, save the file and call an endpoint to see the immediate effect
 - deployment via Helm to the k8s flavor of your choice
 
 What hasn't made it into the solution but has been considered:
