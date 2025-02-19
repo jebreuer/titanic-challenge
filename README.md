@@ -23,6 +23,10 @@ What hasn't made it into the solution but has been considered:
 - a build pipeline to automate the build/push process of the api docker image
   - I'd like to try [dagger](https://dagger.io/) for that
 
+Personal Development Environment
+
+The whole stack has only been tested on a current MacBook M4 (14", 24GB) running Docker Desktop and using VSCode. If you're using a different OS/Setup you might run into (minor) issues.
+
 ## Known issues
 
 - after fresh setup the api needs a restart before properly connecting to jaeger (this might be a timing issue)
@@ -34,6 +38,8 @@ What hasn't made it into the solution but has been considered:
 - [Tilt](https://tilt.dev/) (v0.30.0 or later)
 - Docker
 - Kubernetes cluster (e.g., Docker Desktop with Kubernetes enabled)
+- Helm
+- a working shell environment with curl and jq available
 
 ### Using Tilt for Development
 
@@ -44,6 +50,8 @@ Tilt automates all the steps needed to build and deploy the application in devel
    ```bash
    tilt up
    ```
+
+If Tilt starts hanging on the very first run erroring out on the helm installs you might have to stop it and run `helm repo update` manually. Then start tilt again.
 
 2. View the Tilt UI:
 
